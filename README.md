@@ -1,6 +1,7 @@
 # Autocomplete React Component
 
 A simple React Autocomplete component for searching users using the JSONPlaceholder API.
+
 Deployment link: https://elaborate-daffodil-472a0e.netlify.app/
 
 ## How to Run
