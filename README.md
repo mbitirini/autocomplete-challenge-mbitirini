@@ -6,19 +6,13 @@ Deployment link: https://elaborate-daffodil-472a0e.netlify.app/
 
 ## How to Run
 
-1. Change into the project directory:
-
-```
-cd autocomplete-challenge-mbitirini
-```
-
-2. Install dependencies:
+- Install dependencies:
 
 ```
 npm install
 ```
 
-3. Start the development server:
+- Start the development server:
 
 ```
 npm start
