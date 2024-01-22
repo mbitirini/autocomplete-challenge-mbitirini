@@ -1,0 +1,40 @@
+.autocompleteContainer {
+  padding-top: 20vh;
+  width: 40%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+}
+
+.message {
+  margin-top: 15px;
+  color: white;
+  font-family: 'Raleway', sans-serif;
+}
+
+.loader {
+  margin: auto;
+  margin-top: 50px;
+  border: 5px solid black;
+  border-top: 5px solid white;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.title {
+  margin-bottom: 25px;
+  color: white;
+}
