@@ -6,13 +6,13 @@ Deployment link: https://elaborate-daffodil-472a0e.netlify.app/
 
 ## How to Run
 
-- Install dependencies:
+1. Install dependencies:
 
 ```
 npm install
 ```
 
-- Start the development server:
+2. Start the development server:
 
 ```
 npm start
