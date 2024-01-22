@@ -2,14 +2,12 @@
 
 ## 1. What is the difference between Component and PureComponent? Give an example where it might break my app.
 
-The difference is in their default re-rendering behavior. While a `Component` re-renders whenever its parent re-renders, a `PureComponent` does a shallow comparison of its current and next props and state. If these are the same, a re-render is skipped.
+A Component re-renders whenever its parent re-renders, a PureComponent though does a shallow comparison of its current and next props and state. If these are the same, a re-render is skipped.
 
-So a `PureComponent` won't re-render when its parent re-renders if its new props and state are the same with the old ones, offering a performance optimization.
+So the difference is that a PureComponent will re-render only if it detects a difference between the old state and props with the new ones, offering a performance optimization.
 
 **Example of breaking the app**:
-Failing to re-render
-
-`PureComponent` fails to re-render when objects or arrays are mutated directly, since it performs only a shallow comparison. So if a prop is mutated, `PureComponent` will not realize that the prop changed and will not re-render when it actually should.
+PureComponent fails to re-render when objects or arrays are mutated directly, since it performs only a shallow comparison. So if a prop is mutated, PureComponent will not realize that the prop changed and will not re-render when it actually should.
 Following example shows that:
 
 ```
@@ -30,27 +28,22 @@ const App = () => {
 
 ## 2. Context + ShouldComponentUpdate might be dangerous. Why is that?
 
-`Context` enables the passing of data to components deep in the component tree without needing intermediate components to know about it.
-
-`ShouldComponentUpdate` checks if there are meaningful changes in the data (props or state) before allowing the component and its children to be re-rendered. If the changes are not important it skips the re-rendering.
-
-The combination of `Context` and `shouldComponentUpdate` might be dangerous. Since `shouldComponentUpdate` relies on shallow comparisons, changes in `context` values may not trigger a re-render if the reference to the `context` object remains the same. Incorrect usage might introduce bugs, leading to components not updating when they should or updating unnecessarily.
-
-(To mitigate this issue, avoiding direct mutation of context values is advised, so changes in the context object are more accurately detected, preventing unexpected behavior)
+The combination of context and ShouldComponentUpdate might be dangerous.
+When we use ShouldComponentUpdate to selectively re-render a part of the app, it can potentially block context propagation. As a result, states that should be updated with context may not receive the necessary updates.
 
 ## 3. Describe 3 ways to pass information from a component to its PARENT.
 
 1. Callback Functions: The parent creates a callback function, passes it as a prop to the child and the child calls this function to pass data back to the parent.
 
-2. Function Props: The parent directly passes a function as a prop to the child, allowing the child to use the function to send data or trigger actions in the parent.
+2. useRef Hook: The parent passes a useRef object as a prop to the child. The child can update the current property of the useRef object, allowing data to be communicated to the parent without triggering a re-render.
 
 3. Context API: In more complex applications, the React Context API can be used to pass data from child to parent.
 
 ## 4. Give 2 ways to prevent components from re-rendering.
 
-- For class components: Using `PureComponent` which performs a shallow comparison of props and state before deciding to re-render
+- Utilize useCallback or useMemo in functional components: useCallback memorizes functions and useMemo memorizes values, preventing re-renders if they remain unchanged.
 
-- For functional components: Wrapping the component with `React.memo` to memoize it and prevent re-renders when props don't change.
+- Using useRef, we can store a value that doesn't cause extra re-renders when it changes.
 
 ## 5. What is a fragment and why do we need it? Give an example where it might break my app.
 
@@ -165,7 +158,7 @@ somePromise()
 
 ```
 
-- Callbacks use the error-first pattern, where the first parameter is reserved for an error object. If there's no error the object is null. Otherwise, it contains error information. This parameter is checked to handle errors effectively, like the example below:
+- Callbacks' first parameter is for an error object. It's null if there's no error and contains error information if there is. We check this parameter to handle errors effectively, as in the example below:
 
 ```
 function asyncOperation(callback) {
@@ -207,23 +200,7 @@ async function myAsyncFunction() {
 
 ## 8. How many arguments does setState take and why is it async.
 
-`setState` function takes two arguments. The first argument can be an object or a function and the second argument is an optional callback function.
-
-- When the first argument is an object, you can just pass this object. Example:
-
-```
-this.setState({ key: 'new value' });
-```
-
-- When the first argument is a function, it receives the previous state and props as arguments and returns an object that represents the new state. Example:
-
-```
-this.setState((prevState, props) => ({
-  key: prevState.key + 1,
-}));
-```
-
-- Callback Function (Optional): The second argument is an optional callback function that is executed after the state is updated. Example:
+The setState method in React takes two arguments. The first argument can be either an object or a function. If it's an object, it represents the new state, if it's a function it receives the previous state and props as arguments and should return an object representing the new state. The second argument is an optional callback function that is called after the state is updated.
 
 ```
 this.setState({ key: 'new value' }, () => {
@@ -233,29 +210,19 @@ this.setState({ key: 'new value' }, () => {
 
 **Why setState is async?**
 
-`setState` is asynchronous to optimize performance. It batches state updates, preventing immediate re-renders after each call. This improves efficiency by avoiding unnecessary rendering cycles and ensuring consistent behavior.
+setState is asynchronous in order to ensure that the app state is updated efficiently, allowing for improved performance and avoiding unnecessary rendering cycles.
 
 ## 9. List the steps needed to migrate a Class to Function Component.
 
-- Change the class component definition to a function component.
-
+- Set the class component declaration to a function declaration
 - Remove the constructor method if present.
-
-- Use the `useState` hook to initialize and manage state variables.
-
-- Declare functions using `const` where applicable.
-
+- Convert state variables in useState hooks
 - Directly use state and props without the `this` keyword.
-
-- Use the `useState` hook's setter function for state updates, especially when the new state depends on the previous state.
-
 - Replace the `render` method by returning JSX directly from the function component.
-
 - Use the `useEffect` hook for lifecycle methods (`componentDidMount`, `componentDidUpdate`, `componentWillUnmount`).
-
 - Replace class refs with the `useRef` hook.
 
-Note: This is a basic overview and the actual migration might involve additional considerations based on the complexity of the class component. Considerations may include for instance, using specific hooks depending on the component's structure and functionality.
+Note: The provided steps offer a basic overview of migrating a Class to a Function Component. Actual migration may require additional considerations based on the component's complexity, such as the use of specific hooks tailored to its structure and functionality.
 
 ## 10. List a few ways styles can be used with components.
 
@@ -315,4 +282,4 @@ Example:
 <div dangerouslySetInnerHTML={{__html: '<strong>strong text</strong>'}} />
 ```
 
-However, setting HTML from code is risky because it’s easy to expose users to a cross-site scripting (XSS) attack. We need to always ensure that the rendered HTML is trusted and sanitized before using it in the application.
+(note: it should be used with caution to prevent cross-site scripting (XSS) vulnerabilities.)
